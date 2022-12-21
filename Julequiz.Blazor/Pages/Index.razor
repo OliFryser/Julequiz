@@ -1,0 +1,15 @@
+﻿@page "/"
+
+<PageTitle>Velkommen til Julequizzen</PageTitle>
+
+<h1>Velkommen til Julequizzen!</h1>
+
+<div class="input-name">
+    <h2>Indtast dit navn herunder</h2>
+    <InputText @bind-Value=@Name></InputText>
+</div>
+
+@code {
+    string Name {get; set;} = "";
+    
+}
