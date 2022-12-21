@@ -18,18 +18,18 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 IWinnerController winnercontroller = new WinnerController();
-var winnerName = app.MapGroup("/winnername");
+var winnerNameGroup = app.MapGroup("/winnername");
 
 
-winnerName.MapGet("/", winnercontroller.GetWinner)
+winnerNameGroup.MapGet("/", winnercontroller.GetWinner)
 .WithName("GetWinnerName")
 .WithOpenApi();
 
-winnerName.MapPost("/{name}", (string name) => winnercontroller.RegisterWinnerName(name))
+winnerNameGroup.MapPost("/{name}", (string name) => winnercontroller.RegisterWinnerName(name))
 .WithName("PostWinnerName")
 .WithOpenApi();
 
-winnerName.MapGet("/reset", winnercontroller.ResetWinner)
+winnerNameGroup.MapGet("/reset", winnercontroller.ResetWinner)
 .WithName("ResetWinnerName")
 .WithOpenApi();
 

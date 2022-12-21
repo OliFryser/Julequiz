@@ -1,8 +1,7 @@
 namespace Julequiz;
 public interface IWinnerController 
 {
-    void RegisterWinnerName(string name);
-    bool ResetWinner();
-    bool IsWinnerFound();
-    string? GetWinner();
+    IResult RegisterWinnerName(string name);
+    IResult ResetWinner();
+    IResult GetWinner();
 }

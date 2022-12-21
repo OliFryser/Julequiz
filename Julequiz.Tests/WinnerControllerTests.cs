@@ -10,74 +10,82 @@ public class WinnerControllerTests
         var testWinner = "Oliver";
 
         // Act
-        winnerController.RegisterWinnerName(testWinner);
+        var result = (Ok<String>) winnerController.RegisterWinnerName(testWinner);
 
         // Assert
-        winnerController.WinnerName.Should().Be(testWinner);
+        result.Value.Should().Be(testWinner);
+        result.StatusCode.Should().Be(200);
     }
 
     [Fact]
-    public void RegisterWinnerName_GivenNoNameIsNull()
-    {
-        // Arrange
-        var winnerController = new WinnerController();
-
-        // Act
-
-        // Assert
-        winnerController.WinnerName.Should().BeNull();
-    }
-
-    [Fact]
-    public void IsWinnerFound_ReturnsFalse_GivenNoName()
-    {
-        // Arrange
-        var winnerController = new WinnerController();
-
-        // Act
-
-        // Assert
-        winnerController.IsWinnerFound().Should().BeFalse();
-    }
-    
-    [Fact]
-    public void IsWinnerFound_ReturnsTrue_GivenName()
+    public void RegisterWinnerName_GivenWhenWinnerIsFound_ReturnsConflict()
     {
         // Arrange
         var winnerController = new WinnerController();
 
         // Act
         winnerController.RegisterWinnerName("Oliver");
+        var result = (Conflict<string>) winnerController.RegisterWinnerName("Olivia");
 
         // Assert
-        winnerController.IsWinnerFound().Should().BeTrue();
+        result.StatusCode.Should().Be(409);
+        result.Value.Should().Be("Oliver");
     }
 
     [Fact]
-    public void ResetWinner_ReturnsFalse_GivenNoName()
+    public void ResetWinner_ReturnsBadRequest_GivenNoName()
     {
         // Arrange
         var winnerController = new WinnerController();
 
         // Act
-
+        var result = (BadRequest) winnerController.ResetWinner();
 
         // Assert
-        winnerController.ResetWinner().Should().BeFalse();
-        winnerController.WinnerName.Should().BeNull();
+        result.StatusCode.Should().Be(400);
     }
 
     [Fact]
-    public void ResetWinner_ReturnsTrue_GivenName()
+    public void ResetWinner_ReturnsNoContent_GivenName()
     {
         // Arrange
         var winnerController = new WinnerController();
 
         // Act
         winnerController.RegisterWinnerName("Oliver");
+        var result = (NoContent) winnerController.ResetWinner();
 
         // Assert
-        winnerController.ResetWinner().Should().BeTrue();
-        winnerController.WinnerName.Should().BeNull();
+        result.StatusCode.Should().Be(204);
+        winnerController.WinnerName.Should().Be("");
+    }
+
+    [Fact]
+    public void GetWinner_ReturnsOkAndWinner_HavingWinner()
+    {
+        // Arrange
+        var winnerController = new WinnerController();
+
+        // Act
+        winnerController.RegisterWinnerName("Oliver");
+        var result = (Ok<string>) winnerController.GetWinner();
+
+        // Assert
+        result.StatusCode.Should().Be(200);
+        result.Value.Should().Be("Oliver");
+    }
+
+    [Fact]
+    public void GetWinner_ReturnsNotFound_HavingNoWinner()
+    {
+        // Arrange
+        var winnerController = new WinnerController();
+
+        // Act
+        var result = (NotFound<string>) winnerController.GetWinner();
+
+        // Assert
+        result.StatusCode.Should().Be(404);
+        result.Value.Should().Be("no winner");
     }
 }

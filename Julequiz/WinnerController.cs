@@ -2,35 +2,43 @@ namespace Julequiz;
 
 public class WinnerController : IWinnerController
 {
-    public string? WinnerName {get; set;}
+    public string WinnerName {get; set;} = "";
 
-    public void RegisterWinnerName(string name) 
+    public IResult RegisterWinnerName(string name) 
     {
         if(!IsWinnerFound()) 
         {
-            WinnerName = name;
+            lock(WinnerName) 
+            {
+                WinnerName = name;
+            }
+            return TypedResults.Ok(WinnerName);
         }
+        return TypedResults.Conflict(WinnerName);
     }
 
-    public bool IsWinnerFound() => WinnerName is not null;
+    private bool IsWinnerFound() => WinnerName != "";
 
-    public bool ResetWinner() 
+    public IResult ResetWinner() 
     {
         if(IsWinnerFound()) 
         {
-            WinnerName = null;
-            return true;
+            lock(WinnerName) 
+            {
+            WinnerName = "";
+            }
+            return TypedResults.NoContent();
         }
-        return false;
+        return TypedResults.BadRequest();
     }
 
-    public string? GetWinner() 
+    public IResult GetWinner() 
     {
         if(!IsWinnerFound()) 
         {
-            return "";
+            return TypedResults.NotFound("no winner");
         }
-        else return WinnerName;
+        else return TypedResults.Ok(WinnerName);
     }
 
 }
