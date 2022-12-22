@@ -1,0 +1,17 @@
+﻿@page "/buzzer"
+@inject ExampleModel exampleModel
+
+<PageTitle>Buzzer</PageTitle>
+
+<h1>Buzzer</h1>
+
+<p>Klik når du er klar til at svare</p>
+
+<button class="btn btn-primary" @onclick="Buzz">Svar</button>
+
+@code {
+    private void Buzz()
+    {
+        await Http.PostAsync($"https://julequizapi20221222104454.azurewebsites.net/winnername/{exampleModel.Name}", null);
+    }
+}

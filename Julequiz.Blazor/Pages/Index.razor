@@ -1,15 +1,41 @@
 ﻿@page "/"
+@inject ILogger<Index> Logger
+@inject ExampleModel exampleModel
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
 
-<PageTitle>Velkommen til Julequizzen</PageTitle>
+
+<PageTitle>Julequizzen</PageTitle>
 
 <h1>Velkommen til Julequizzen!</h1>
 
-<div class="input-name">
+<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
     <h2>Indtast dit navn herunder</h2>
-    <InputText @bind-Value=@Name></InputText>
-</div>
+    <InputText id="name" @bind-Value=@exampleModel.Name></InputText>
+    <ValidationMessage For="@(() => exampleModel.Name)" />
+    <button class="btn btn-primary" type="submit">Videre</button>
+    <button class="btn btn-primary" onclick="@Reset">Reset</button>
+    <div id="name-display">@exampleModel.Name</div>
+
+    <DataAnnotationsValidator />
+</EditForm>
 
 @code {
-    string Name {get; set;} = "";
-    
+
+
+    private async Task HandleValidSubmit()
+    {
+        Logger.LogInformation("HandleValidSubmit called");
+        await Http.PostAsync($"https://julequizapi20221222104454.azurewebsites.net/winnername/{exampleModel.Name}", null);
+        Winner = await Http.GetFromJsonAsync<string>("https://julequizapi20221222104454.azurewebsites.net/winnername/");
+
+
+        //NavigationManager.NavigateTo($"buzzer");
+    }
+
+    private async Task Reset()
+    {
+        await Http.GetAsync("https://julequizapi20221222104454.azurewebsites.net/winnername/reset");
+        Winner = await Http.GetFromJsonAsync<string>("https://julequizapi20221222104454.azurewebsites.net/winnername/");
+    }
 }
